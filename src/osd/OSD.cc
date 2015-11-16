@@ -4768,7 +4768,6 @@ void OSD::send_pg_stats(const utime_t &now)
     uint64_t tid = ++pg_stat_tid;
     m->set_tid(tid);
     m->osd_stat = cur_stat;
-    outstanding_pg_stats.insert(tid);
 
     xlist<PG*>::iterator p = pg_stat_queue.begin();
     while (!p.end()) {
@@ -4794,6 +4793,7 @@ void OSD::send_pg_stats(const utime_t &now)
     if (!outstanding_pg_stats.empty()) {
       last_pg_stats_ack = ceph_clock_now(cct);
     }
+    outstanding_pg_stats.insert(tid);
     dout(20) << __func__ << "  updates pending: " << outstanding_pg_stats << dendl;
 
     monc->send_mon_message(m);

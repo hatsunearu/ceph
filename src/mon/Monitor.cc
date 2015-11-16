@@ -3274,7 +3274,7 @@ void Monitor::handle_route(MonOpRequestRef op)
       }
       if (m->send_osdmap_first) {
 	dout(10) << " sending osdmaps from " << m->send_osdmap_first << dendl;
-	osdmon()->send_incremental(m->send_osdmap_first, session,
+	osdmon()->send_incremental(m->send_osdmap_first, rr->session,
 				   true, MonOpRequestRef());
       }
       routed_requests.erase(m->session_mon_tid);

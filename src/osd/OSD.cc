@@ -4731,8 +4731,8 @@ void OSD::send_failures()
       int failed_for = (int)(double)(now - failure_queue.begin()->second);
       monc->send_mon_message(new MOSDFailure(monc->get_fsid(), i, failed_for,
 					     osdmap->get_epoch()));
+      failure_pending[osd] = make_pair(failure_queue.begin()->second, i);
     }
-    failure_pending[osd] = make_pair(failure_queue.begin()->second, i);
     failure_queue.erase(osd);
   }
 }

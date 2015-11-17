@@ -590,10 +590,6 @@ void OSDMap::Incremental::decode(bufferlist::iterator& bl)
     bl.advance(-struct_v_size);
     decode_classic(bl);
     encode_features = 0;
-    if (struct_v >= 6)
-      encode_features = CEPH_FEATURE_PGID64;
-    else
-      encode_features = 0;
     return;
   }
   {
@@ -645,7 +641,7 @@ void OSDMap::Incremental::decode(bufferlist::iterator& bl)
     if (struct_v >= 2)
       ::decode(encode_features, bl);
     else
-      encode_features = CEPH_FEATURE_PGID64 | CEPH_FEATURE_OSDMAP_ENC;
+      encode_features = 0;
     DECODE_FINISH(bl); // osd-only data
   }
 

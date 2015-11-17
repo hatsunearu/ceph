@@ -1026,12 +1026,18 @@ void OSDService::retrieve_epochs(epoch_t *_boot_epoch, epoch_t *_up_epoch,
                                  epoch_t *_bind_epoch) const
 {
   Mutex::Locker l(epoch_lock);
-  if (_boot_epoch)
+  if (_boot_epoch) {
+    generic_derr << "_boot_epoch = " << boot_epoch << dendl;
     *_boot_epoch = boot_epoch;
-  if (_up_epoch)
+  }
+  if (_up_epoch) {
+    generic_derr << "_up_epoch = " << up_epoch << dendl;
     *_up_epoch = up_epoch;
-  if (_bind_epoch)
+  }
+  if (_bind_epoch) {
+    generic_derr << "_bind_epoch = " << bind_epoch << dendl;
     *_bind_epoch = bind_epoch;
+  }
 }
 
 void OSDService::set_epochs(const epoch_t *_boot_epoch, const epoch_t *_up_epoch,
@@ -6447,6 +6453,15 @@ void OSD::handle_osd_map(MOSDMap *m)
   }
 
   epoch_t _bind_epoch = service.get_bind_epoch();
+  derr << "_bind_epoch = " << _bind_epoch << dendl;
+  if (osdmap->is_up(whoami)) {
+    derr << " up" << dendl;
+    if (!(osdmap->get_addr(whoami) == client_messenger->get_myaddr()))
+      derr << " addr mismatch, " << osdmap->get_addr(whoami) << " != "
+	   << client_messenger->get_myaddr() << dendl;
+    if (_bind_epoch < osdmap->get_up_from(whoami))
+      derr << " bind < up_from " << osdmap->get_up_from(whoami) << dendl;
+  }
   if (osdmap->is_up(whoami) &&
       osdmap->get_addr(whoami) == client_messenger->get_myaddr() &&
       _bind_epoch < osdmap->get_up_from(whoami)) {
